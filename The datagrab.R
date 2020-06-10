@@ -7,8 +7,8 @@ library("dplyr")
 ##Set up the authentification to connect to Twitter##
 twitter_token<-create_token(
         app = "Analysis For DCFBHK",
-        consumer_key = "6QF9Wa8FnTukq3bRXhDdXmPei",
-        consumer_secret= "VLCqhP4aRaRB1gx6M2kLmERZmUfWbSZU82MRW5iffEXQKMGcE2",
+        consumer_key = "Your consumer key",
+        consumer_secret= "Your secret Key",
         set_renv = TRUE
 )
 
@@ -55,3 +55,5 @@ with(data.plot,qplot(aes(ymax=ymax,ymin=ymin,fill=type_of_tweets)))+geom_rect()+
         coord_polar(theta='y')+
         theme_void()+
         theme(legend.position="right")
+dev.copy(jpeg,file="twitter ratio.jpeg",width=480,height=480)
+dev.off()
