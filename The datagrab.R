@@ -51,9 +51,11 @@ data.plot$category=data$category
 #specify the legend#
 type_of_tweets<-paste(data.plot$category,data.plot$percentage,"%")
 #plotting#
-with(data.plot,qplot(aes(ymax=ymax,ymin=ymin,fill=type_of_tweets)))+geom_rect()+
-        coord_polar(theta='y')+
-        theme_void()+
-        theme(legend.position="right")
+ggplot(data.plot, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=1, fill=type_of_tweets)) +
+        geom_rect() +
+        coord_polar(theta="y") + 
+        xlim(c(1, 4)) +
+        theme_void() +
+        theme(legend.position = "right")
 dev.copy(jpeg,file="twitter ratio.jpeg",width=480,height=480)
 dev.off()
