@@ -59,3 +59,43 @@ ggplot(data.plot, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=1, fill=type_of_tweets)
         theme(legend.position = "right")
 dev.copy(jpeg,file="twitter ratio.jpeg",width=480,height=480)
 dev.off()
+
+#SHOW WHEN THE TWEETS ARE PUBLISHED#
+colnames(target)[colnames(target)=="screen_name"]<-"Twitter_account"
+
+p<-ts_plot(dplyr::group_by(target,Twitter_account,"year"))
+p+ggplot2::theme_minimal()+
+        ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))+
+        ggplot2::labs(
+                x=NULL,y=NULL,
+                tittle="Frequency of Tweets from Trash",
+                subtitle = "Tweets counts aggregated by year",
+                caption = "\nSource:Data collect from Twitter API by PFL"
+        )
+
+#SHOW FROM WHERE THE TWEETS ARE PUBLISHED#
+target_app<-target%>%
+        select(source)%>%
+        group_by(source)%>%
+        summarize(count=n())
+target_app<-subset(target_app,count>10)
+
+data.plot1<-data.frame(category=target_app$source,
+                       count=target_app$count)
+data.plot1$fraction=data.plot1$count/sum(data.plot1$count)
+data.plot1$percentage=data.plot1$count/sum(data.plot1$count)*100
+data.plot1$ymax=cumsum(data.plot1$fraction)
+data.plot1$ymin=c(0,head(data.plot1,n=1))
+data.Plot1<-data.plot1[,-1]
+data.Plot1<-round(data.Plot1,2)
+data.Plot1$category=data.plot1$category
+View(data.Plot1)
+
+Source<-paste(data.Plot1$category,data.Plot1$percentage,"%")
+dataplot1<-data.Plot1[,-1]
+datapLot<-dataplot1[,-1]
+dataPLOT<-datapLot[,-1]
+
+sp<-ggplot(dataPLOT,aes(x="percentage",y=category,fill=Source))+geom_bar(width = 1,stat = "identity")
+pie<-sp+coord_polar("y",start = 0)
+pie
