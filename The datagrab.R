@@ -73,7 +73,7 @@ p+ggplot2::theme_minimal()+
                 caption = "\nSource:Data collect from Twitter API by PFL"
         )
 
-#SHOW FROM WHERE THE TWEETS ARE PUBLISHED#
+##SHOW FROM WHERE THE TWEETS ARE PUBLISHED##
 target_app<-target%>%
         select(source)%>%
         group_by(source)%>%
@@ -99,3 +99,38 @@ dataPLOT<-datapLot[,-1]
 sp<-ggplot(dataPLOT,aes(x="percentage",y=category,fill=Source))+geom_bar(width = 1,stat = "identity")
 pie<-sp+coord_polar("y",start = 0)
 pie
+
+
+###SHOW THE MOST FREQUENT WORDS FOUND IN THE TWEETS###
+##remove all the nonsense character#
+target_tweets_organic$text<-gsub("https\\S*","",target_tweets_organic$text)
+target_tweets_organic$text<-gsub("@\\S*","",target_tweets_organic$text)
+target_tweets_organic$text<-gsub("amp","",target_tweets_organic$text)
+target_tweets_organic$text<-gsub("[\r\n]","",target_tweets_organic$text)
+target_tweets_organic$text<-gsub("[[:punct:]]","",target_tweets_organic$text)
+
+#remove the stop words from the text#
+install.packages("tokenizers")
+library(tokenizers)
+install.packages("tidytext")
+library(tidytext)
+tweets<-target_tweets_organic%>%
+        select(text)%>%
+        unnest_tokens(word,text)
+tweets<-tweets%>%
+        anti_join(stop_words)
+
+tweets %>% # gives you a bar chart of the most frequent words found in the tweets
+        count(word, sort = TRUE) %>%
+        top_n(15) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(x = word, y = n)) +
+        geom_col() +
+        xlab(NULL) +
+        coord_flip() +
+        labs(y = "Count",
+             x = "Unique words",
+             title = "Most frequent words found in the tweets of Trash",
+             subtitle = "Stop words removed from the list")
+
+
