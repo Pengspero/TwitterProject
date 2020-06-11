@@ -139,6 +139,17 @@ install.packages("wordcloud")
 library(wordcloud)
 install.packages("RColorBrewer")
 library(RColorBrewer)
+target_tweets_organic$hashtags <- as.character(target_tweets_organic$hashtags)
+target_tweets_organic$hashtags <- gsub("c\\(", "", target_tweets_organic$hashtags)set.seed(1234)
+wordcloud(target_tweets_organic$hashtags, min.freq=5, scale=c(3.5, .5), random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+
+
+##SHOW THE ACCOUNTS FROM WHICH MOST RETWEETS ORIGINATE
+install.packages("wordcloud")
+library(wordcloud)
+install.packages("RColorBrewer")
+library(RColorBrewer)
 set.seed(1234)
 wordcloud(target_retweets$retweet_screen_name, min.freq=3, scale=c(2, .5), random.order=FALSE, rot.per=0.25, 
           colors=brewer.pal(8, "Dark2"))
