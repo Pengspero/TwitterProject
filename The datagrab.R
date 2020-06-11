@@ -134,3 +134,39 @@ tweets %>% # gives you a bar chart of the most frequent words found in the tweet
              subtitle = "Stop words removed from the list")
 
 
+#SHOW THE MOST FREQUENTLY USED HASHTAGS#
+install.packages("wordcloud")
+library(wordcloud)
+install.packages("RColorBrewer")
+library(RColorBrewer)
+set.seed(1234)
+wordcloud(target_retweets$retweet_screen_name, min.freq=3, scale=c(2, .5), random.order=FALSE, rot.per=0.25, 
+          colors=brewer.pal(8, "Dark2"))
+
+
+#PERFORM A SENTIMENT ANALYSIS OF THE TWEETS#
+library(syuzhet)
+# Converting tweets to ASCII to trackle strange characters
+tweets <- iconv(tweets, from="UTF-8", to="ASCII", sub="")
+# removing retweets, in case needed 
+tweets <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets)
+# removing mentions, in case needed
+tweets <-gsub("@\\w+","",tweets)
+ew_sentiment<-get_nrc_sentiment((tweets))
+sentimentscores<-data.frame(colSums(ew_sentiment[,]))
+names(sentimentscores) <- "Score"
+sentimentscores <- cbind("sentiment"=rownames(sentimentscores),sentimentscores)
+rownames(sentimentscores) <- NULL
+library(ggplot2)
+ggplot(data=sentimentscores,aes(x=sentiment,y=Score))+
+        geom_bar(aes(fill=sentiment),stat = "identity")+
+        theme(legend.position="none")+
+        xlab("Sentiments")+ylab("Scores")+
+        ggtitle("Total sentiment based on scores")+
+        theme_minimal()
+
+#perform the geo-analysis on the tweets from trash
+install.packages("ggmap")
+install.packages("tidyverse")
+
+
